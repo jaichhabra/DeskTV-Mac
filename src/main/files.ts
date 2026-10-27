@@ -50,7 +50,7 @@ export function exposeImage(path: string): string | null {
   return `dtv://file/${token}`;
 }
 
-/** Windows' own thumbnail for a file (video frames, album art, photos), cached as a JPEG. */
+/** macOS's own thumbnail for a file (Quick Look: video frames, album art, photos), cached as a JPEG. */
 export async function makeThumbnail(id: string, path: string): Promise<string | null> {
   const out = join(thumbDir(), `${id}.jpg`);
   if (existsSync(out)) return `dtv://thumb/${id}.jpg`;
@@ -65,7 +65,7 @@ export async function makeThumbnail(id: string, path: string): Promise<string | 
   }
 }
 
-/** A program's own icon, as Windows draws it at a large size, cached as a PNG (it keeps its transparency). */
+/** An app's own icon, as macOS draws it at a large size, cached as a PNG (it keeps its transparency). */
 export async function exeIcon(id: string, exe: string): Promise<string | null> {
   const name = `icon-${id}.png`;
   const out = join(thumbDir(), name);

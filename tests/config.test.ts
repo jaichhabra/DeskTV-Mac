@@ -51,6 +51,11 @@ describe('settings', () => {
     expect(c.weather.city).toBe('Delhi');
   });
 
+  it('gives built-in services saved on Windows the ways the Mac opens them', () => {
+    const c = sanitizeConfig({ version: 2, apps: [{ id: 'appletv', name: 'Apple TV', builtin: true, launch: [{ kind: 'startApp', match: 'Apple TV' }] }] });
+    expect(c.apps.find((a) => a.id === 'appletv')?.launch).toContainEqual({ kind: 'startApp', match: 'TV' });
+  });
+
   it('keeps row order and fills in missing rows', () => {
     const c = sanitizeConfig({ rows: [{ kind: 'games', visible: false }, { kind: 'games', visible: true }, { kind: 'nope' }] });
     expect(c.rows[0]).toEqual({ kind: 'games', visible: false });

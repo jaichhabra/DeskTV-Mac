@@ -4,7 +4,7 @@ import { ActionTile, AppTile } from '../components/Tiles';
 import { Grid } from './Grid';
 import { Sheet } from './Sheet';
 
-/** Every app: the ones on this PC first, then hidden or not installed ones; hold OK on one for its menu. */
+/** Every app: the ones on this Mac first, then hidden or not installed ones; hold OK on one for its menu. */
 export function AppsSheet() {
   const d = useDeskContext();
   const c = d.config;

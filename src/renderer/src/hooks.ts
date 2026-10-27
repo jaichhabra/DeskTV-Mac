@@ -38,7 +38,7 @@ export function useDesk() {
 }
 
 /**
- * The layout for the window's real size, re-measured when it's resized, moved to another screen or Windows'
+ * The layout for the window's real size, re-measured when it's resized, moved to another screen or the display's
  * scaling changes, and settled first so it doesn't jump (shared/layout). Writes the sizes into CSS variables.
  */
 export function useLayout(opts: Pick<Config['display'], 'scale' | 'safeArea'> & { tileSize: Config['appearance']['tileSize'] }): Layout {

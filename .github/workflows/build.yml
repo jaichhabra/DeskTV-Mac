@@ -7,8 +7,10 @@ on:
   pull_request:
 
 jobs:
-  windows:
-    runs-on: windows-latest
+  mac:
+    runs-on: macos-latest
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: false
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -19,8 +21,27 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
-      - run: npx electron-builder --win --x64 --publish never
+      - run: npx electron-builder --mac --publish never
+
+      # Start the built app (Apple Silicon) for a while and check that it runs, finds the Mac's apps and logs no errors.
+      - name: Smoke test
+        run: |
+          APP="dist/mac-arm64/DeskTV.app"
+          codesign --verify --deep --strict "$APP"
+          "$APP/Contents/MacOS/DeskTV" --windowed &
+          PID=$!
+          sleep 25
+          kill -0 $PID
+          LOG="$HOME/Library/Application Support/DeskTV/logs/desktv.log"
+          cat "$LOG"
+          grep -q "starting" "$LOG"
+          grep -q "Found [0-9]* installed apps" "$LOG"
+          ! grep -q " ERROR " "$LOG"
+          kill $PID
+
       - uses: actions/upload-artifact@v4
         with:
-          name: DeskTV-Setup
-          path: dist/DeskTV-Setup-*.exe
+          name: DeskTV-mac
+          path: |
+            dist/DeskTV-*.dmg
+            dist/DeskTV-*.zip

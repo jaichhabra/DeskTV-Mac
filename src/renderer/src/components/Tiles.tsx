@@ -27,8 +27,8 @@ desk?.onIcons(() => {
   iconListeners.forEach((l) => l());
 });
 
-/** The app's own icon from Windows, for apps DeskTV has no art for. */
-function useWindowsIcon(appId: string, wanted: boolean): string | null {
+/** The app's own icon from macOS, for apps DeskTV has no art for. */
+function useAppIcon(appId: string, wanted: boolean): string | null {
   const [url, setUrl] = useState<string | null>(null);
   const [gen, setGen] = useState(iconGeneration);
   useEffect(() => {
@@ -61,7 +61,7 @@ export function AppTile({
   const d = useDeskContext();
   const image = useChosenImage(app.image);
   const ready = isAvailable(d.config, app);
-  const winIcon = useWindowsIcon(app.id, !app.image && !app.builtin);
+  const winIcon = useAppIcon(app.id, !app.image && !app.builtin);
   return (
     <button
       className={`tile ${variant}-tile${d.moving === app.id ? ' moving' : ''}${ready && !app.hidden ? '' : ' unavailable'}`}

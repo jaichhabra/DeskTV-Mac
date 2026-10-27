@@ -72,7 +72,7 @@ function TopButtons() {
   return (
     <nav className="top-buttons" data-row aria-label="Menu">
       {d.config.widgets.network && (
-        <button className="capsule" data-item data-key="top:network" onClick={() => void desk.openUri('ms-settings:network')}>
+        <button className="capsule" data-item data-key="top:network" onClick={() => void desk.openUri('x-apple.systempreferences:com.apple.preference.network')}>
           <Glyph name={!online ? 'offline' : net === 'Ethernet' ? 'ethernet' : 'wifi'} size="1.25em" />
           <span>{online ? (net ?? 'Connected') : 'Offline'}</span>
         </button>
@@ -194,7 +194,7 @@ function Drawer() {
           <div className="drawer-tiles">
             <ActionTile variant="drawer" keyName="dr:apps" glyph="apps" label="All Apps" onClick={() => d.go('apps')} />
             <ActionTile variant="drawer" keyName="dr:settings" glyph="settings" label="Home Settings" onClick={() => d.go('settings')} />
-            <ActionTile variant="drawer" keyName="dr:windows" glyph="windows" label="PC Settings" onClick={() => void desk.openUri('ms-settings:')} />
+            <ActionTile variant="drawer" keyName="dr:mac" glyph="desktop" label="Mac Settings" onClick={() => void desk.openUri('x-apple.systempreferences:')} />
           </div>
         </div>
       </div>

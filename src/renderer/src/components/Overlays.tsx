@@ -115,7 +115,7 @@ export function AppEditor({ app, close }: { app: AppEntry | null; close(): void 
           <input data-item data-key="name" data-autofocus value={name} maxLength={60} onChange={(e) => setName(e.target.value)} />
         </Field>
         <Field label="Opens">
-          <Cycler value={{ url: 'A website', exe: 'A program on this PC', startApp: 'An installed app' }[kind]} onStep={(s) => setKind(cycle<Kind>(['url', 'exe', 'startApp'], kind, s))} k="kind" />
+          <Cycler value={{ url: 'A website', exe: 'An app on this Mac', startApp: 'An installed app' }[kind]} onStep={(s) => setKind(cycle<Kind>(['url', 'exe', 'startApp'], kind, s))} k="kind" />
         </Field>
         {kind === 'url' && (
           <Field label="Website">
@@ -208,7 +208,7 @@ function InstalledPicker({ close, pick }: { close(): void; pick(a: InstalledApp)
         <h2>Installed apps</h2>
         <div className="picker-list" data-scroller>
           {apps === null && <div className="card-note">Reading the Start menu…</div>}
-          {apps?.length === 0 && <div className="card-note">Windows didn't list any apps.</div>}
+          {apps?.length === 0 && <div className="card-note">No apps were found in Applications.</div>}
           {apps?.map((a) => (
             <div data-row key={a.appId}>
               <button className="menu-item" data-item data-key={`pick:${a.appId}`} onClick={() => pick(a)}>

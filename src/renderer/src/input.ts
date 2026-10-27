@@ -103,6 +103,12 @@ export function attachInput(h: InputHandlers): () => void {
         e.preventDefault();
         if (document.activeElement instanceof HTMLElement) openMenu(document.activeElement);
         return;
+      case 'f':
+      case 'F':
+        if (!(e.ctrlKey && e.metaKey)) break;
+        e.preventDefault();
+        h.toggleTv();
+        return;
       case 'F11':
         e.preventDefault();
         h.toggleTv();
@@ -112,7 +118,7 @@ export function attachInput(h: InputHandlers): () => void {
         h.search();
         return;
     }
-    if (!typing && (e.key === '/' || (e.ctrlKey && e.key.toLowerCase() === 'f'))) {
+    if (!typing && (e.key === '/' || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'f'))) {
       e.preventDefault();
       h.search();
     }

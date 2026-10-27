@@ -3,7 +3,7 @@ import type { DisplayInfo, DisplayState } from '../shared/types';
 import { log } from './log';
 
 /**
- * Which screens Windows has and which one DeskTV is on, measured and reported; the layout decides what to do with
+ * Which screens macOS has and which one DeskTV is on, measured and reported; the layout decides what to do with
  * it (shared/layout). Screens coming and going are settled for half a second before DeskTV moves, so a projector or
  * TV that flickers while it starts doesn't throw the window around.
  */

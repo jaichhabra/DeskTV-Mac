@@ -7,7 +7,7 @@ import type { Config } from '../shared/types';
 import { log } from './log';
 
 /**
- * The settings, as versioned JSON in %APPDATA%\DeskTV\config.json. Writes go to a temporary file that then replaces
+ * The settings, as versioned JSON in ~/Library/Application Support/DeskTV/config.json. Writes go to a temporary file that then replaces
  * the old one, and the last good copy stays as config.backup.json, so a power cut mid-write can't lose them.
  */
 export class JsonFile<T> {

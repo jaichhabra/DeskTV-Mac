@@ -17,7 +17,8 @@ import { checkTarget } from './launch';
 export const CONFIG_VERSION = 2;
 
 /**
- * The services DeskTV starts with. Each opens its installed Windows app when the Start menu has one by that name,
+ * The services DeskTV starts with. Each opens its installed Mac app when Applications has one by that name (or the
+ * Windows edition's Start menu does),
  * then its official website. Spotify also has its documented spotify: URI scheme.
  */
 export const DEFAULT_APPS: AppEntry[] = [
@@ -40,6 +41,7 @@ export const DEFAULT_APPS: AppEntry[] = [
   ]),
   app('appletv', 'Apple TV', 'appletv', '#1C1C1E', 'streaming', [
     { kind: 'startApp', match: 'Apple TV' },
+    { kind: 'startApp', match: 'TV' },
     { kind: 'url', url: 'https://tv.apple.com/' }
   ]),
   app('plex', 'Plex', 'plex', '#1F1F1F', 'streaming', [
@@ -50,10 +52,16 @@ export const DEFAULT_APPS: AppEntry[] = [
   app('ytmusic', 'YouTube Music', 'youtubemusic', '#FF0033', 'music', [
     { kind: 'url', url: 'https://music.youtube.com/' }
   ]),
-  app('vlc', 'VLC', 'vlcmediaplayer', '#FF8800', 'apps', [{ kind: 'startApp', match: 'VLC media player' }]),
+  app('vlc', 'VLC', 'vlcmediaplayer', '#FF8800', 'apps', [
+    { kind: 'startApp', match: 'VLC media player' },
+    { kind: 'startApp', match: 'VLC' }
+  ]),
   app('browser', 'Browser', null, '#3A3A3C', 'apps', [{ kind: 'url', url: 'https://www.google.com/' }]),
   app('steam', 'Steam', 'steam', '#1B2838', 'games', [{ kind: 'startApp', match: 'Steam' }]),
-  app('xbox', 'Xbox', 'xbox', '#107C10', 'games', [{ kind: 'startApp', match: 'Xbox' }])
+  app('xbox', 'Xbox', 'xbox', '#107C10', 'games', [
+    { kind: 'startApp', match: 'Xbox' },
+    { kind: 'url', url: 'https://www.xbox.com/play' }
+  ])
 ].map((a, i) => ({ ...a, pinned: i < 5 }));
 
 function app(
@@ -143,6 +151,10 @@ function cleanApp(v: unknown): AppEntry | null {
   const a = obj(v);
   if (typeof a.id !== 'string' || !ID.test(a.id)) return null;
   const launch = (Array.isArray(a.launch) ? a.launch : []).map(cleanTarget).filter((t): t is LaunchTarget => !!t);
+  // Built-in services also get the ways to open them that later versions added (the Mac's app names, say), so
+  // settings saved on another PC work here.
+  const builtin = a.builtin === true ? DEFAULT_APPS.find((x) => x.id === a.id) : undefined;
+  if (builtin) for (const t of builtin.launch) if (!launch.some((l) => JSON.stringify(l) === JSON.stringify(t))) launch.push({ ...t });
   if (!launch.length) return null;
   const name = str(a.name, '', 60).trim();
   if (!name) return null;

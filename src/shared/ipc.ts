@@ -20,13 +20,13 @@ export interface DeskApi {
 
   installedApps(refresh?: boolean): Promise<InstalledApp[]>;
   launchApp(appId: string): Promise<LaunchResult>;
-  /** The app's own icon from Windows when it's installed, as a dtv: address. */
+  /** The app's own icon from macOS when it's installed, as a dtv: address. */
   appIcon(appId: string): Promise<string | null>;
   openMedia(mediaId: string): Promise<LaunchResult>;
   pickExecutable(): Promise<string | null>;
   pickImage(): Promise<string | null>;
   pickFolder(): Promise<string | null>;
-  /** Opens a documented app link, such as ms-settings: for Windows' Settings. */
+  /** Opens a documented app link, such as x-apple.systempreferences: for the Mac's System Settings. */
   openUri(uri: string): Promise<boolean>;
   /** The Wi-Fi's name, "Ethernet", or null when offline. */
   networkName(): Promise<string | null>;

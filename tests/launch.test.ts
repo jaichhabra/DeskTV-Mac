@@ -23,6 +23,28 @@ describe('launching', () => {
     expect(checkTarget({ kind: 'exe', path: 'C:\\x\\a.exe\0.txt' })).not.toBeNull();
   });
 
+  it('takes Mac apps by their absolute .app path', () => {
+    expect(checkTarget({ kind: 'exe', path: '/Applications/VLC.app' })).toBeNull();
+    expect(checkTarget({ kind: 'exe', path: '/Users/jai/Applications/Plex.app/' })).toBeNull();
+    expect(checkTarget({ kind: 'exe', path: '/Applications/../bin/sh' })).not.toBeNull();
+    expect(checkTarget({ kind: 'exe', path: '/usr/bin/curl' })).not.toBeNull();
+    expect(checkTarget({ kind: 'exe', path: 'VLC.app' })).not.toBeNull();
+  });
+
+  it('opens the Mac settings link and no other system link', () => {
+    expect(checkTarget({ kind: 'uri', uri: 'x-apple.systempreferences:com.apple.preference.network' })).toBeNull();
+    expect(checkTarget({ kind: 'uri', uri: 'file:///Applications/Calculator.app' })).not.toBeNull();
+  });
+
+  it("matches the Mac's short app names only exactly", () => {
+    const mac = [
+      { name: 'TV Remote', appId: '/Applications/TV Remote.app' },
+      { name: 'TV', appId: '/System/Applications/TV.app' }
+    ];
+    expect(findStartApp(mac, 'TV')?.appId).toBe('/System/Applications/TV.app');
+    expect(findStartApp([{ name: 'TV Remote', appId: 'x' }], 'TV')).toBeUndefined();
+  });
+
   it('matches Start menu apps by exact name first, never an uninstaller', () => {
     const apps = [
       { name: 'Plex HTPC', appId: 'a' },

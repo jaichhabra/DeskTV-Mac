@@ -7,7 +7,7 @@ import { checkExePath, checkTarget } from '../shared/launch';
 import type { Channel } from '../shared/ipc';
 import type { Config, MediaKind } from '../shared/types';
 import { ConfigStore } from './store';
-import { available, detached, findVlc, iconSource, initInstalled, installedApps, launch, refreshLogos } from './launcher';
+import { available, findVlc, iconSource, initInstalled, installedApps, launch, openApp, refreshLogos } from './launcher';
 import { exeIcon, exposeImage, handleScheme, makeThumbnail, registerScheme } from './files';
 import { Library, photosIn } from './library';
 import { FeedService } from './feeds';
@@ -15,10 +15,10 @@ import { displayState, place, watchDisplays } from './display';
 import { log } from './log';
 import { networkName } from './network';
 
-/** Brings DeskTV back from any app, as the remote's Home button would. */
-const HOME_SHORTCUT = 'CommandOrControl+Alt+Home';
+/** Brings DeskTV back from any app, as the remote's Home button would (Macs have no Home key). */
+const HOME_SHORTCUT = 'Control+Option+Command+T';
 
-// Safe mode: `DeskTV.exe --windowed` never goes full screen, whatever the settings say.
+// Safe mode: `open -a DeskTV --args --windowed` never goes full screen, whatever the settings say.
 const SAFE_MODE = process.argv.includes('--windowed');
 
 if (!app.requestSingleInstanceLock()) {
@@ -42,7 +42,8 @@ function send(channel: string, payload?: unknown): void {
 
 function start(): void {
   log('info', `DeskTV ${app.getVersion()} starting${SAFE_MODE ? ' in safe mode' : ''}`);
-  Menu.setApplicationMenu(null);
+  // The Mac's own menu: ⌘Q, copy and paste in text fields, the window commands. Hidden in TV mode.
+  Menu.setApplicationMenu(Menu.buildFromTemplate([{ role: 'appMenu' }, { role: 'editMenu' }, { role: 'viewMenu', submenu: [{ role: 'togglefullscreen' }] }, { role: 'windowMenu' }]));
   lockDownSessions();
   handleScheme();
 
@@ -134,7 +135,7 @@ function createWindow(): void {
     if (crashes.length <= 2) win?.webContents.reload();
     else {
       win?.setFullScreen(false);
-      void dialog.showMessageBox({ type: 'error', message: 'DeskTV stopped working', detail: 'Its log is in %APPDATA%\\DeskTV\\logs.' });
+      void dialog.showMessageBox({ type: 'error', message: 'DeskTV stopped working', detail: 'Its log is in ~/Library/Application Support/DeskTV/logs.' });
     }
   });
   win.webContents.on('unresponsive', () => log('warn', 'Screen not responding'));
@@ -168,11 +169,9 @@ function lockDownSessions(): void {
 }
 
 function applyStartup(c: Config): void {
-  // Not while developing; run from the signed Electron runtime (tools/shortcut.ps1), Windows starts it with the
-  // app's folder.
-  if (process.env.ELECTRON_RENDERER_URL) return;
-  const args = app.isPackaged ? ['--startup'] : [app.getAppPath(), '--startup'];
-  app.setLoginItemSettings({ openAtLogin: c.tv.startWithWindows, path: process.execPath, args });
+  // Only the installed app opens at login, not a development copy.
+  if (!app.isPackaged) return;
+  app.setLoginItemSettings({ openAtLogin: c.tv.startWithWindows });
 }
 
 function setTv(on: boolean): void {
@@ -237,7 +236,7 @@ function registerIpc(): void {
     const item = typeof id === 'string' ? library.find(id) : undefined;
     if (!item) return { ok: false, error: 'This file is no longer in the library' };
     const vlc = store.get().library.player === 'vlc' ? findVlc() : null;
-    if (vlc) detached(vlc, ['--fullscreen', item.path]);
+    if (vlc) openApp(vlc, [item.path]);
     else {
       const err = await shell.openPath(item.path);
       if (err) return { ok: false, error: err };
@@ -248,7 +247,7 @@ function registerIpc(): void {
 
   handle('pick:exe', async () => {
     if (!win) return null;
-    const r = await dialog.showOpenDialog(win, { properties: ['openFile'], filters: [{ name: 'Programs', extensions: ['exe'] }] });
+    const r = await dialog.showOpenDialog(win, { defaultPath: '/Applications', properties: ['openFile'], filters: [{ name: 'Apps', extensions: ['app'] }] });
     const p = r.filePaths[0];
     return !r.canceled && p && checkExePath(p) === null ? p : null;
   });
@@ -320,7 +319,7 @@ function registerIpc(): void {
   });
 }
 
-/** The settings plus which apps can open on this PC, which the screen uses to hide the ones that can't. */
+/** The settings plus which apps can open on this Mac, which the screen uses to hide the ones that can't. */
 function withAvailability(c: Config): Config & { available: string[] } {
   return { ...c, available: c.apps.filter(available).map((a) => a.id) };
 }

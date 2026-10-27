@@ -2,7 +2,7 @@ import { app } from 'electron';
 import { appendFileSync, mkdirSync, renameSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-/** A plain log in %APPDATA%\DeskTV\logs, rolled over at 1 MB, for when something goes wrong on the TV. */
+/** A plain log in ~/Library/Application Support/DeskTV/logs, rolled over at 1 MB, for when something goes wrong on the TV. */
 let file = '';
 
 function path(): string {

@@ -157,7 +157,7 @@ export function SettingsPage() {
           <Row k="m:screen" label="Screen and TV Mode" open run={open('screen')} />
           <Row k="m:desktv" label="DeskTV" open run={open('desktv')} />
           <Heading>Leave DeskTV</Heading>
-          <Row k="m:min" label="Show the Desktop" hint="Ctrl + Alt + Home brings DeskTV back" run={() => void desk.minimize()} />
+          <Row k="m:min" label="Show the Desktop" hint="⌃⌥⌘T brings DeskTV back" run={() => void desk.minimize()} />
           <Row k="m:quit" label="Quit" run={() => void desk.quit()} />
         </>
       );
@@ -275,7 +275,7 @@ export function SettingsPage() {
             />
           ))}
           <Row k="l:open" label="Add Folders" open run={() => d.go('library')} />
-          <Row k="l:player" label="Play files with" value={c.library.player === 'vlc' ? 'VLC' : 'Windows'} change={() => set((x) => void (x.library.player = x.library.player === 'vlc' ? 'system' : 'vlc'))} />
+          <Row k="l:player" label="Play files with" value={c.library.player === 'vlc' ? 'VLC' : 'Mac default'} change={() => set((x) => void (x.library.player = x.library.player === 'vlc' ? 'system' : 'vlc'))} />
           <Row k="l:rescan" label="Rescan" value={d.library.scanning ? 'Scanning…' : `${d.library.items.length} files`} run={() => void desk.rescanLibrary().catch(report)} />
         </>
       );
@@ -283,9 +283,9 @@ export function SettingsPage() {
     case 'screen':
       rows = (
         <>
-          <Row k="d:tv" label="TV Mode" hint="Full screen. F11 switches it too." value={onOff(!!d.display?.fullscreen)} change={() => void desk.setTvMode(!d.display?.fullscreen)} />
+          <Row k="d:tv" label="TV Mode" hint="Full screen. ⌃⌘F switches it too." value={onOff(!!d.display?.fullscreen)} change={() => void desk.setTvMode(!d.display?.fullscreen)} />
           <Row k="d:start" label="Open in TV Mode" value={onOff(c.tv.startInTvMode)} change={() => set((x) => void (x.tv.startInTvMode = !x.tv.startInTvMode))} />
-          <Row k="d:login" label="Start with Windows" value={onOff(c.tv.startWithWindows)} change={() => set((x) => void (x.tv.startWithWindows = !x.tv.startWithWindows))} />
+          <Row k="d:login" label="Open at Login" value={onOff(c.tv.startWithWindows)} change={() => set((x) => void (x.tv.startWithWindows = !x.tv.startWithWindows))} />
           <Row
             k="d:display"
             label="Screen"
@@ -309,7 +309,7 @@ export function SettingsPage() {
                 </span>
               </div>
               <div className="set-info">
-                <span>Windows scaling</span>
+                <span>Display scaling</span>
                 <span>{Math.round(cur.scaleFactor * 100)}%</span>
               </div>
               <div className="set-info">
@@ -344,7 +344,7 @@ export function SettingsPage() {
             }
           />
           <Heading>Notices</Heading>
-          <div className="set-note">Weather from Open-Meteo. Prices from Binance. The log is in %APPDATA%\DeskTV\logs.</div>
+          <div className="set-note">Weather from Open-Meteo. Prices from Binance. The log is in ~/Library/Application Support/DeskTV/logs.</div>
         </>
       );
       break;
@@ -360,7 +360,7 @@ export function SettingsPage() {
       <div className="settings-brand glass">
         <Glyph name="sparkles" size="calc(150 * var(--k))" />
         <div className="brand-name">DeskTV</div>
-        <div className="brand-sub">Your PC's TV home screen</div>
+        <div className="brand-sub">Your Mac's TV home screen</div>
         <div className="brand-ver">DeskTV {d.version}</div>
       </div>
       <div className="settings-panel glass">

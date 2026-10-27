@@ -1,8 +1,8 @@
 {
-  "name": "desktv",
+  "name": "desktv-mac",
   "productName": "DeskTV",
   "version": "0.1.0",
-  "description": "A cinematic, full-screen entertainment home screen for Windows PCs on TVs, monitors and projectors.",
+  "description": "A cinematic, full-screen TV home screen for a Mac on a TV, monitor or projector: SundarTV's look, on macOS.",
   "author": "JC",
   "license": "MIT",
   "private": true,
@@ -14,7 +14,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
     "test": "vitest run",
     "icons": "node tools/icons.mjs",
-    "dist": "npm run typecheck && npm test && npm run build && electron-builder --win --x64"
+    "dist": "npm run typecheck && npm test && npm run build && electron-builder --mac --publish never"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
