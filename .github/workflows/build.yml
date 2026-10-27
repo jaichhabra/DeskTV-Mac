@@ -32,6 +32,8 @@ jobs:
           PID=$!
           sleep 25
           kill -0 $PID
+          # A picture of the home screen, as it runs on this Mac.
+          screencapture -x dist/mac-home.png || true
           LOG="$HOME/Library/Application Support/DeskTV/logs/desktv.log"
           cat "$LOG"
           grep -q "starting" "$LOG"
@@ -45,3 +47,10 @@ jobs:
           path: |
             dist/DeskTV-*.dmg
             dist/DeskTV-*.zip
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: DeskTV-mac-screenshot
+          path: dist/mac-home.png
+          if-no-files-found: ignore
